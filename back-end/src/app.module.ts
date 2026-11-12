@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
-import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { MissionController } from './mission/mission.controller.js';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { MissionsModule } from './mission/missions.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -16,8 +17,20 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: process.env.OBSERVE_APP_SECRET ?? 'YOUR_APP_SECRET',
       serviceId: 'application',
     }),
+
+    //sequelize module for database connection
+    SequelizeModule.forRoot({
+      dialect: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'dev',
+      password: 'dev123',
+      database: 'nestjs_db',
+      autoLoadModels: true,
+      synchronize: true,
+    }),
+    MissionsModule,
   ],
-  controllers: [AppController, MissionController],
   providers: [AppService],
 })
 export class AppModule {}
