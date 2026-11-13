@@ -3,10 +3,11 @@ import { MissionsService } from '../missions.service.js';
 import { AppModule } from '../../app.module.js';
 
 describe('MissionsService', () => {
+  let module: TestingModule;
   let service: MissionsService;
 
   beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
@@ -49,4 +50,8 @@ describe('MissionsService', () => {
     const foundMission = await service.findOne(mission.id);
     expect(foundMission).toBeNull();
   });
+
+  afterAll(async () => {
+    await module.close();
+  }); 
 })
