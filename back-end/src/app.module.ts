@@ -4,6 +4,7 @@ import { AppService } from './app.service.js';
 import { MissionController } from './mission/mission.controller.js';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { MissionsModule } from './mission/missions.module.js';
+import { Mission } from './mission/mission.model.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -28,6 +29,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       database: 'nestjs_db',
       autoLoadModels: true,
       synchronize: true,
+      models: [Mission],
     }),
     MissionsModule,
   ],
