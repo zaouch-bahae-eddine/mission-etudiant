@@ -40,4 +40,10 @@ export class Mission extends Model {
     allowNull: false,
   })
   declare location: string;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  declare authorId: number;
 }
