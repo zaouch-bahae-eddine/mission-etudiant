@@ -6,6 +6,7 @@ export const missionSchema = z.object({
     datetime: z.date({ message: "Datetime is required" }),
     price: z.string().regex(/^\d+(\.\d{1,2})?$/, { message: "Price must be a valid decimal number" }),
     location: z.string().min(1, { message: "Location is required" }),
+    authorId: z.number().int().positive({ message: "Author ID must be a positive integer" }),
 });
 
 export type MissionDto = z.infer<typeof missionSchema>;
