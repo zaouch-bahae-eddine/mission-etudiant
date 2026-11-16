@@ -8,7 +8,7 @@ import {
 import { UserRole } from './enums/user-role.enum.js';
 
 
-@Table({ tableName: 'users' })
+@Table({ tableName: 'users', timestamps: true, underscored: true })
 export class User extends Model {
   @Column
   declare firstName: string;

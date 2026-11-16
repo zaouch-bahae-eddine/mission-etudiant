@@ -1,13 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model.js';
+import { PaginationFilterDto } from '../pagination/pagination.js';
 
 @Injectable()
 export class UsersService {
     constructor(@InjectModel(User) private readonly userModel: typeof User ) {}
 
-    async findAll(): Promise<User[]> {
-        return this.userModel.findAll();
+    async findAll(paginationfilter: PaginationFilterDto): Promise<User[]> {
+        return this.userModel.findAll({
+            limit: paginationfilter.limit,
+            offset: (paginationfilter.page - 1) * paginationfilter.limit,
+            order: paginationfilter.sortBy
+                ? [[paginationfilter.sortBy, paginationfilter.sortOrder || 'ASC']]
+                : undefined,
+        });
     }
 
     async findOne(id: number): Promise<User | null> {

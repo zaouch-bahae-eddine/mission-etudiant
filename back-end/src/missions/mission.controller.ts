@@ -14,7 +14,7 @@ import {
   paginationFilterSchema,
   type PaginationFilterDto,
 } from '../pagination/pagination.js';
-import { type MissionDto, missionSchema } from './dto/mission.dto.js';
+import { type MissionDto, missionSchema, type MissionUpdateDto, missionUpdateSchema } from './dto/mission.dto.js';
 import { Mission } from './mission.model.js';
 
 @Controller('mission')
@@ -38,7 +38,7 @@ export class MissionController {
   @Put(':id')
   async updateMission(
     @Param('id') id: number,
-    @Body({ schema: missionSchema }) mission: MissionDto,
+    @Body({ schema: missionUpdateSchema }) mission: MissionUpdateDto,
   ): Promise<Mission | null> {
     return await this.missionsService.update(id, mission);
   }
