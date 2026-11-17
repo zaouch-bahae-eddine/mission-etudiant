@@ -5,13 +5,14 @@ import {
     type StudentAvailabilityDto,
     type StudentAvailabilityUpdateDto,
 } from '../dto/student-availability.dto.js';
+import { faker } from '@faker-js/faker';
 
 export class StudentAvailabilitySpecHelper {
     service = getTestingModule().get(StudentAvailabilityService);
 
     availabilityData(overrides: Partial<StudentAvailabilityDto> = {}) {
         return {
-            dayOfWeek: 1,
+            dayOfWeek: faker.number.int({ min: 1, max: 7 }),
             startTime: '09:00:00',
             endTime: '12:00:00',
             ...overrides,
