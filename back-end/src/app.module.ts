@@ -6,6 +6,7 @@ import { MissionsModule } from './missions/missions.module.js';
 import { Mission } from './missions/mission.model.js';
 import { UsersController } from './users/users.controller.js';
 import { UsersModule } from './users/users.module.js';
+import { StudentModule } from './student/student.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -34,6 +35,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
         }),
         MissionsModule,
         UsersModule,
+        StudentModule,
     ],
     providers: [AppService],
 })

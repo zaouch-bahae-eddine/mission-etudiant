@@ -3,22 +3,23 @@ import { UserRole } from './enums/user-role.enum.js';
 
 @Table({ tableName: 'users', timestamps: true, underscored: true })
 export class User extends Model {
-    @Column
+    @Column(DataType.STRING(100))
     declare firstName: string;
 
-    @Column
+    @Column(DataType.STRING(100))
     declare lastName: string;
 
     @Column({
         unique: true,
+        type: DataType.STRING(255),
         allowNull: false,
     })
     declare email: string;
 
-    @Column({ allowNull: true })
+    @Column({ type: DataType.DATE, allowNull: true })
     declare emailVerifiedAt: Date | null;
 
-    @Column({ allowNull: false })
+    @Column({ type: DataType.STRING(255), allowNull: false })
     declare passwordHash: string;
 
     @Column({
@@ -27,18 +28,18 @@ export class User extends Model {
     })
     declare role: UserRole;
 
-    @Column({ allowNull: true })
+    @Column({ type: DataType.STRING(13), allowNull: true })
     declare phone: string | null;
 
-    @Column({ allowNull: true })
+    @Column({ type: DataType.DATE, allowNull: true })
     declare phoneVerifiedAt: Date | null;
 
-    @Column({ allowNull: true })
+    @Column({ type: DataType.TEXT, allowNull: true })
     declare avatarKey: string | null;
 
-    @Column({ allowNull: false })
+    @Column({ type: DataType.STRING(100), allowNull: false })
     declare city: string;
 
-    @Column({ allowNull: false })
+    @Column({ type: DataType.STRING(10), allowNull: false })
     declare postalCode: string;
 }
