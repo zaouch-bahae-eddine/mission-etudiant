@@ -5,6 +5,7 @@ import {
     type StudentAvailabilityDto,
     type StudentAvailabilityUpdateDto,
 } from './dto/student-availability.dto.js';
+import { type Transaction } from 'sequelize';
 
 export type CreateStudentAvailability = StudentAvailabilityDto;
 
@@ -21,8 +22,12 @@ export class StudentAvailabilityService {
         return this.studentAvailabilityModel.findByPk(id);
     }
 
-    create(data: CreateStudentAvailability): Promise<StudentAvailability> {
-        return this.studentAvailabilityModel.create(data);
+    create(data: CreateStudentAvailability, transaction?: Transaction): Promise<StudentAvailability> {
+        return this.studentAvailabilityModel.create(data, { transaction });
+    }
+
+    bulkCreate(data: CreateStudentAvailability[], transaction?: Transaction): Promise<StudentAvailability[]> {
+        return this.studentAvailabilityModel.bulkCreate(data, { transaction })
     }
 
     async update(

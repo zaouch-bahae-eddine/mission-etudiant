@@ -5,6 +5,7 @@ import {
     type StudentProfileDto,
     type StudentProfileUpdateDto,
 } from './dto/student-profile.dto.js';
+import { type Transaction } from 'sequelize';
 
 @Injectable()
 export class StudentProfileService {
@@ -21,8 +22,8 @@ export class StudentProfileService {
         });
     }
 
-    create(data: StudentProfileDto): Promise<StudentProfile> {
-        return this.studentProfileModel.create(data);
+    create(data: StudentProfileDto, transaction?: Transaction): Promise<StudentProfile> {
+        return this.studentProfileModel.create(data, { transaction });
     }
 
     updateStudentProfile(
