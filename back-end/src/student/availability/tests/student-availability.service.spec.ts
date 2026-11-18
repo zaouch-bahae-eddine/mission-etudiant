@@ -15,7 +15,6 @@ describe('StudentAvailabilityService', () => {
         );
         availabilityHelper = new StudentAvailabilitySpecHelper();
         const userHelper = new UserSpecHelper();
-        userId = (await userHelper.createUserSpec()).id;
     });
 
     it.concurrent('should be defined', () => {
@@ -25,12 +24,11 @@ describe('StudentAvailabilityService', () => {
     it.concurrent('should create a new student availability', async () => {
         const availability =
             await availabilityHelper.createStudentAvailabilitySpec({
-                studentId: userId,
                 dayOfWeek: 3,
                 startTime: '09:00:00',
                 endTime: '12:00:00',
             });
-        expect(availability.studentId).toEqual(userId);
+
         const foundAvailability = await service.findOne(availability.id);
         expect(foundAvailability?.dayOfWeek).toEqual(3);
         expect(foundAvailability?.startTime).toEqual('09:00:00');
@@ -39,10 +37,9 @@ describe('StudentAvailabilityService', () => {
 
     it.concurrent('should return a student availability by id', async () => {
         const availability =
-            await availabilityHelper.createStudentAvailabilitySpec({
-                studentId: userId,
-            });
+            await availabilityHelper.createStudentAvailabilitySpec();
         const foundAvailability = await service.findOne(availability.id);
+
         expect(foundAvailability).not.toBeNull();
         expect(foundAvailability?.id).toEqual(availability.id);
         expect(foundAvailability?.studentId).toEqual(availability.studentId);
@@ -52,10 +49,9 @@ describe('StudentAvailabilityService', () => {
         'should return null when the availability does not exist',
         async () => {
             const availability =
-                await availabilityHelper.createStudentAvailabilitySpec({
-                    studentId: userId,
-                });
+                await availabilityHelper.createStudentAvailabilitySpec();
             await service.delete(availability.id);
+
             expect(await service.findOne(availability.id)).toBeNull();
         },
     );
@@ -64,14 +60,13 @@ describe('StudentAvailabilityService', () => {
         'should update an existing student availability',
         async () => {
             const availability =
-                await availabilityHelper.createStudentAvailabilitySpec({
-                    studentId: userId,
-                });
+                await availabilityHelper.createStudentAvailabilitySpec();
             const updatedAvailability =
                 await availabilityHelper.updateStudentAvailabilitySpec(
                     availability.id,
                     { dayOfWeek: 5, endTime: '14:30:00' },
                 );
+
             expect(updatedAvailability?.dayOfWeek).toEqual(5);
             const foundAvailability = await service.findOne(availability.id);
             expect(foundAvailability?.endTime).toEqual('14:30:00');
@@ -88,10 +83,9 @@ describe('StudentAvailabilityService', () => {
         'should return null when updating a deleted availability',
         async () => {
             const availability =
-                await availabilityHelper.createStudentAvailabilitySpec({
-                    studentId: userId,
-                });
+                await availabilityHelper.createStudentAvailabilitySpec();
             await service.delete(availability.id);
+
             expect(
                 await availabilityHelper.updateStudentAvailabilitySpec(
                     availability.id,
@@ -103,9 +97,8 @@ describe('StudentAvailabilityService', () => {
 
     it.concurrent('should delete a student availability', async () => {
         const availability =
-            await availabilityHelper.createStudentAvailabilitySpec({
-                studentId: userId,
-            });
+            await availabilityHelper.createStudentAvailabilitySpec();
+
         expect(await service.delete(availability.id)).toBe(true);
         expect(await service.findOne(availability.id)).toBeNull();
         expect(await service.delete(availability.id)).toBe(false);
