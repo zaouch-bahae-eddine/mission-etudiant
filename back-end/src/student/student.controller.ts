@@ -12,7 +12,7 @@ import {
     studentSkillCreateSchema,
 } from './student-skills/dto/student-skill.dto.js';
 
-@Controller()
+@Controller('students/')
 export class StudentController {
     constructor(
         private readonly profileService: StudentProfileService,
@@ -20,12 +20,12 @@ export class StudentController {
         private readonly studentSkillsService: StudentSkillService,
     ) {}
 
-    @Patch('/profile/:id')
+    @Patch(':id/profile')
     async updateProfile(@Param('id') userId: number, @Body({ schema: studentProfileUpdateSchema }) data: StudentProfileUpdateDto) {
         return await this.profileService.updateStudentProfile(userId, data);
     }
 
-    @Patch('/availability/:studentId')
+    @Patch(':studentId/availability')
     async updateAvailability(
         @Param('studentId') studentId: number,
         @Body({ schema: studentAvailabilityRegistrationSchema })
@@ -34,7 +34,7 @@ export class StudentController {
         return this.availabilityService.updateForStudent(studentId, data);
     }
 
-    @Post('/students/:studentId/skills')
+    @Post(':studentId/skills')
     async addStudentSkill(
         @Param('studentId') studentId: number,
         @Body({ schema: studentSkillCreateSchema }) data: StudentSkillCreateDto,
@@ -45,7 +45,7 @@ export class StudentController {
         });
     }
 
-    @Delete('/students/:studentId/skills/:skillId')
+    @Delete('/:studentId/skills/:skillId')
     async deleteStudentSkill(
         @Param('studentId') studentId: number,
         @Param('skillId') skillId: number,

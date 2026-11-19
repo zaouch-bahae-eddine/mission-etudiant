@@ -43,7 +43,7 @@ export class RegistrationService {
             };
         } catch (err) {
             await t.rollback();
-            return err;
+            throw err;
         }
 
         return {};

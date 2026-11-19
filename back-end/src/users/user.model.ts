@@ -3,6 +3,13 @@ import { UserRole } from './enums/user-role.enum.js';
 
 @Table({ tableName: 'users', timestamps: true, underscored: true })
 export class User extends Model {
+    toJSON(): object {
+        const values = super.toJSON() as Record<string, unknown>;
+        delete values.passwordHash;
+        delete values.password_hash;
+        return values;
+    }
+
     @Column(DataType.STRING(100))
     declare firstName: string;
 
