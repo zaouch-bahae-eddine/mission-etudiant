@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model.js';
 import { PaginationFilterDto } from '../pagination/pagination.js';
+import { type Transaction } from 'sequelize';
+import { type UserDto } from './dto/user.dto.js';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -21,8 +24,8 @@ export class UsersService {
         return this.userModel.findByPk(id);
     }
 
-    async create(user: Partial<User>): Promise<User> {
-        return this.userModel.create(user);
+    async create(user: UserDto, transaction?: Transaction): Promise<User> {
+        return this.userModel.create({...user, passwordHash: await this.hashPassword(user.password)}, { transaction });
     }
 
     async update(id: number, user: Partial<User>): Promise<User | null> {
