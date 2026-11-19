@@ -32,9 +32,21 @@ export class StudentAvailability extends Model<
     })
     declare dayOfWeek: number;
 
-    @Column({ type: DataType.TIME, allowNull: false })
+    @Column({
+        type: DataType.TIME,
+        allowNull: false,
+        get(this: StudentAvailability) {
+            return this.getDataValue('startTime')?.slice(0, 5);
+        },
+    })
     declare startTime: string;
 
-    @Column({ type: DataType.TIME, allowNull: false })
+    @Column({
+        type: DataType.TIME,
+        allowNull: false,
+        get(this: StudentAvailability) {
+            return this.getDataValue('endTime')?.slice(0, 5);
+        },
+    })
     declare endTime: string;
 }

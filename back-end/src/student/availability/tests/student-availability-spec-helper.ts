@@ -12,20 +12,18 @@ export class StudentAvailabilitySpecHelper {
     service = getTestingModule().get(StudentAvailabilityService);
 
     availabilityData(
-        overrides?: Partial<StudentAvailabilityUpdateDto> &
-            Pick<StudentAvailabilityUpdateDto, 'studentId'>,
+        overrides?: Partial<StudentAvailabilityUpdateDto> & { studentId?: number },
     ): StudentAvailabilityCreateDto | StudentAvailabilityRegistrationDto {
         return {
             dayOfWeek: faker.number.int({ min: 1, max: 7 }),
-            startTime: '09:00:00',
-            endTime: '12:00:00',
+            startTime: '09:00',
+            endTime: '12:00',
             ...overrides,
         };
     }
 
     async createStudentAvailabilitySpec(
-        overrides: Partial<StudentAvailabilityUpdateDto> &
-            Pick<StudentAvailabilityUpdateDto, 'studentId'>,
+        overrides: Partial<StudentAvailabilityUpdateDto> & { studentId?: number } = {},
     ) {
         const studentId =
             overrides.studentId ??

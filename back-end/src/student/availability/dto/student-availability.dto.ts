@@ -2,8 +2,8 @@ import z from 'zod';
 
 const timeSchema = z
     .string()
-    .regex(/^(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d{1,6})?)?$/, {
-        message: 'Time must use HH:mm or HH:mm:ss format',
+    .regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/, {
+        message: 'Time must use HH:mm format',
     });
 
 const fields = z
@@ -37,7 +37,12 @@ export const studentAvailabilityRegistrationSchema = fields.omit({ studentId: tr
     path: ['endTime'],
 });
 
+export const studentAvailabilitySchema = studentAvailabilityCreateSchema;
+
 export const studentAvailabilityUpdateSchema = fields
+    .omit({ studentId: true })
+    .partial()
+    .strict()
     .refine(
         (data) => Object.values(data).some((value) => value !== undefined),
         {
@@ -51,6 +56,4 @@ export const studentAvailabilityUpdateSchema = fields
 
 export type StudentAvailabilityCreateDto = z.infer<typeof studentAvailabilityCreateSchema>;
 export type StudentAvailabilityRegistrationDto = z.infer<typeof studentAvailabilityRegistrationSchema>;
-export type StudentAvailabilityUpdateDto = z.infer<
-    typeof studentAvailabilityUpdateSchema
->;
+export type StudentAvailabilityUpdateDto = z.infer<typeof studentAvailabilityUpdateSchema>;

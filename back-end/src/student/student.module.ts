@@ -8,6 +8,7 @@ import { Skill } from './skills/skill.model.js';
 import { SkillService } from './skills/skill.service.js';
 import { StudentSkill } from './student-skills/student-skill.model.js';
 import { StudentSkillService } from './student-skills/student-skill.service.js';
+import { StudentController } from './student.controller.js';
 
 @Module({
     imports: [
@@ -30,5 +31,6 @@ import { StudentSkillService } from './student-skills/student-skill.service.js';
         SkillService,
         StudentSkillService,
     ],
+    controllers: [StudentController],
 })
 export class StudentModule {}

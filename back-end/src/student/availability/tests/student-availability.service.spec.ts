@@ -25,14 +25,57 @@ describe('StudentAvailabilityService', () => {
         const availability =
             await availabilityHelper.createStudentAvailabilitySpec({
                 dayOfWeek: 3,
-                startTime: '09:00:00',
-                endTime: '12:00:00',
+                startTime: '09:00',
+                endTime: '12:00',
             });
 
         const foundAvailability = await service.findOne(availability.id);
         expect(foundAvailability?.dayOfWeek).toEqual(3);
-        expect(foundAvailability?.startTime).toEqual('09:00:00');
-        expect(foundAvailability?.endTime).toEqual('12:00:00');
+        expect(foundAvailability?.startTime).toEqual('09:00');
+        expect(foundAvailability?.endTime).toEqual('12:00');
+    });
+
+    it.concurrent('merges an overlapping interval for the same day', async () => {
+        const availability = await availabilityHelper.createStudentAvailabilitySpec({
+            dayOfWeek: 3,
+            startTime: '09:00',
+            endTime: '10:30',
+        });
+        const overlappingAvailability = await availabilityHelper.createStudentAvailabilitySpec({
+            studentId: availability.studentId,
+            dayOfWeek: 3,
+            startTime: '10:15',
+            endTime: '12:00',
+        });
+
+        const updated = await service.updateForStudent(availability.studentId, {
+            dayOfWeek: 3,
+            startTime: '11:30',
+            endTime: '13:00',
+        });
+
+        expect(updated.id).toBe(availability.id);
+        expect(updated.startTime).toBe('09:00');
+        expect(updated.endTime).toBe('13:00');
+        expect(await service.findOne(overlappingAvailability.id)).toBeNull();
+    });
+
+    it.concurrent('creates a separate interval when the time does not overlap', async () => {
+        const availability = await availabilityHelper.createStudentAvailabilitySpec({
+            dayOfWeek: 3,
+            startTime: '09:00',
+            endTime: '12:00',
+        });
+
+        const created = await service.updateForStudent(availability.studentId, {
+            dayOfWeek: 3,
+            startTime: '13:00',
+            endTime: '15:00',
+        });
+
+        expect(created.id).not.toBe(availability.id);
+        expect(created.startTime).toBe('13:00');
+        expect(created.endTime).toBe('15:00');
     });
 
     it.concurrent('should return a student availability by id', async () => {
@@ -64,12 +107,12 @@ describe('StudentAvailabilityService', () => {
             const updatedAvailability =
                 await availabilityHelper.updateStudentAvailabilitySpec(
                     availability.id,
-                    { dayOfWeek: 5, endTime: '14:30:00' },
+                    { dayOfWeek: 5, endTime: '14:30' },
                 );
 
             expect(updatedAvailability?.dayOfWeek).toEqual(5);
             const foundAvailability = await service.findOne(availability.id);
-            expect(foundAvailability?.endTime).toEqual('14:30:00');
+            expect(foundAvailability?.endTime).toEqual('14:30');
             expect(foundAvailability?.startTime).toEqual(
                 availability.startTime,
             );

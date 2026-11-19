@@ -24,6 +24,7 @@ describe('Student availability DTOs', () => {
         { startTime: '09:60' },
         { endTime: '08:00' },
         { endTime: '09:00:00' },
+        { startTime: '09:00:00.1', endTime: '10:00:00.1' },
         { id: 5 },
         { studentId: undefined },
     ])('rejects invalid creation data %j', (override) => {
@@ -33,12 +34,12 @@ describe('Student availability DTOs', () => {
         ).toBe(false);
     });
 
-    it('accepts seconds and fractional seconds', () => {
+    it('accepts times in HH:mm format', () => {
         expect(
             studentAvailabilitySchema.safeParse({
                 ...data,
-                startTime: '09:00:00.1',
-                endTime: '09:00:00.2',
+                startTime: '09:30',
+                endTime: '10:45',
             }).success,
         ).toBe(true);
     });

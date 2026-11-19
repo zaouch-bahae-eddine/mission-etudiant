@@ -26,14 +26,15 @@ export class StudentProfileService {
         return this.studentProfileModel.create(data, { transaction });
     }
 
-    updateStudentProfile(
+    async updateStudentProfile(
         userId: number,
         updateData: StudentProfileUpdateDto,
-    ): Promise<[number, StudentProfile[]]> {
-        return this.studentProfileModel.update(updateData, {
+    ): Promise<StudentProfile> {
+        const [, res] = await this.studentProfileModel.update(updateData, {
             where: { userId },
             returning: true,
         });
+        return res[0];
     }
 
     deleteStudentProfile(userId: number): Promise<number> {
