@@ -28,9 +28,13 @@ export const studentProfileSchema = z
     })
     .strict();
 
+export const studentProfileRegistrationSchema = studentProfileSchema.omit({
+    userId: true,
+});
+
 export const studentProfileUpdateSchema = studentProfileSchema
-    .omit({ userId: true })
     .partial()
+    .required({ userId: true })
     .refine(
         (data) => Object.values(data).some((value) => value !== undefined),
         {
@@ -39,6 +43,9 @@ export const studentProfileUpdateSchema = studentProfileSchema
     );
 
 export type StudentProfileDto = z.infer<typeof studentProfileSchema>;
+export type StudentProfileRegistrationDto = z.infer<
+    typeof studentProfileRegistrationSchema
+>;
 export type StudentProfileUpdateDto = z.infer<
     typeof studentProfileUpdateSchema
 >;

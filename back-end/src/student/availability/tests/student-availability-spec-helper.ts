@@ -2,7 +2,8 @@ import { getTestingModule } from '../../../test/setup.js';
 import { StudentProfileSpecHelper } from '../../profile/tests/student-profile-spec-helper.js';
 import { StudentAvailabilityService } from '../student-availability.service.js';
 import {
-    type StudentAvailabilityDto,
+    StudentAvailabilityRegistrationDto,
+    type StudentAvailabilityCreateDto,
     type StudentAvailabilityUpdateDto,
 } from '../dto/student-availability.dto.js';
 import { faker } from '@faker-js/faker';
@@ -10,7 +11,10 @@ import { faker } from '@faker-js/faker';
 export class StudentAvailabilitySpecHelper {
     service = getTestingModule().get(StudentAvailabilityService);
 
-    availabilityData(overrides: Partial<StudentAvailabilityDto> = {}) {
+    availabilityData(
+        overrides?: Partial<StudentAvailabilityUpdateDto> &
+            Pick<StudentAvailabilityUpdateDto, 'studentId'>,
+    ): StudentAvailabilityCreateDto | StudentAvailabilityRegistrationDto {
         return {
             dayOfWeek: faker.number.int({ min: 1, max: 7 }),
             startTime: '09:00:00',
@@ -20,7 +24,8 @@ export class StudentAvailabilitySpecHelper {
     }
 
     async createStudentAvailabilitySpec(
-        overrides: Partial<StudentAvailabilityDto> = {},
+        overrides: Partial<StudentAvailabilityUpdateDto> &
+            Pick<StudentAvailabilityUpdateDto, 'studentId'>,
     ) {
         const studentId =
             overrides.studentId ??

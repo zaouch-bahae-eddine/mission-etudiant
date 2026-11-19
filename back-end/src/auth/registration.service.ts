@@ -3,7 +3,7 @@ import { UsersService } from '../users/users.service.js';
 import { StudentProfileService } from '../student/profile/student-profile.service.js';
 import { StudentAvailabilityService } from '../student/availability/student-availability.service.js';
 import { StudentSkillService } from '../student/student-skills/student-skill.service.js';
-import { StudentSchemaDto } from '../student/dto/student-schema.dto.js';
+import { StudentRegistrationSchemaDto } from '../student/dto/student-schema.dto.js';
 import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class RegistrationService {
         private readonly sequelize: Sequelize,
     ) {}
 
-    async registerStudent(studentData: StudentSchemaDto): Promise<any> {
+    async registerStudent(studentData: StudentRegistrationSchemaDto): Promise<any> {
         const t = await this.sequelize.transaction();
         try {
             const user = await this.usersService.create(studentData.user, t);

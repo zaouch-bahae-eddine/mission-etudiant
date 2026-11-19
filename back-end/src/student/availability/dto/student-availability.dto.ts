@@ -27,14 +27,17 @@ function validTimeRange(data: {
     return seconds(data.endTime) > seconds(data.startTime);
 }
 
-export const studentAvailabilitySchema = fields.refine(validTimeRange, {
+export const studentAvailabilityCreateSchema = fields.refine(validTimeRange, {
+    message: 'End time must be after start time',
+    path: ['endTime'],
+});
+
+export const studentAvailabilityRegistrationSchema = fields.omit({ studentId: true }).refine(validTimeRange, {
     message: 'End time must be after start time',
     path: ['endTime'],
 });
 
 export const studentAvailabilityUpdateSchema = fields
-    .omit({ studentId: true })
-    .partial()
     .refine(
         (data) => Object.values(data).some((value) => value !== undefined),
         {
@@ -46,7 +49,8 @@ export const studentAvailabilityUpdateSchema = fields
         path: ['endTime'],
     });
 
-export type StudentAvailabilityDto = z.infer<typeof studentAvailabilitySchema>;
+export type StudentAvailabilityCreateDto = z.infer<typeof studentAvailabilityCreateSchema>;
+export type StudentAvailabilityRegistrationDto = z.infer<typeof studentAvailabilityRegistrationSchema>;
 export type StudentAvailabilityUpdateDto = z.infer<
     typeof studentAvailabilityUpdateSchema
 >;

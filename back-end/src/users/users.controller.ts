@@ -14,8 +14,7 @@ export class UsersController {
 
   @Post()
   async createUser(@Body({ schema: UserSchema }) user: UserDto) {
-    const passwordHash = await this.usersService.hashPassword(user.password);
-    return this.usersService.create({ ...user, passwordHash });
+    return this.usersService.create(user);
   }
 
   @Patch(':id')

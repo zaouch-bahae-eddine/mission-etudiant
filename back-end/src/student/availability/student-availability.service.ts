@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { StudentAvailability } from './student-availability.model.js';
 import {
-    type StudentAvailabilityDto,
+    type StudentAvailabilityCreateDto,
     type StudentAvailabilityUpdateDto,
 } from './dto/student-availability.dto.js';
 import { type Transaction } from 'sequelize';
 
-export type CreateStudentAvailability = StudentAvailabilityDto;
 
 export type UpdateStudentAvailability = StudentAvailabilityUpdateDto;
 
@@ -22,11 +21,11 @@ export class StudentAvailabilityService {
         return this.studentAvailabilityModel.findByPk(id);
     }
 
-    create(data: CreateStudentAvailability, transaction?: Transaction): Promise<StudentAvailability> {
+    create(data: StudentAvailabilityCreateDto, transaction?: Transaction): Promise<StudentAvailability> {
         return this.studentAvailabilityModel.create(data, { transaction });
     }
 
-    bulkCreate(data: CreateStudentAvailability[], transaction?: Transaction): Promise<StudentAvailability[]> {
+    bulkCreate(data: StudentAvailabilityCreateDto[], transaction?: Transaction): Promise<StudentAvailability[]> {
         return this.studentAvailabilityModel.bulkCreate(data, { transaction })
     }
 

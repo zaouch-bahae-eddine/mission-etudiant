@@ -21,11 +21,7 @@ export class UserSpecHelper {
     }
 
     async createUserSpec(overrides: Partial<UserDto> = {}) {
-        const { password, ...data } = this.userData(overrides);
-        return this.usersService.create({
-            ...data,
-            passwordHash: await this.usersService.hashPassword(password),
-        });
+        return this.usersService.create(this.userData(overrides));
     }
 
     async updateUserSpec(id: number, data: UserUpdateDto) {
