@@ -7,4 +7,9 @@ export const studentSkillSchema = z
     })
     .strict();
 
+export const studentSkillCreateSchema = studentSkillSchema
+    .pick({ skillId: true })
+    .strict();
+
 export type StudentSkillDto = z.infer<typeof studentSkillSchema>;
+export type StudentSkillCreateDto = z.infer<typeof studentSkillCreateSchema>;

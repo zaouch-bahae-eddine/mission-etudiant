@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { StudentProfileService } from './profile/student-profile.service.js';
 import { StudentAvailabilityService } from './availability/student-availability.service.js';
 import { StudentSkillService } from './student-skills/student-skill.service.js';
@@ -7,13 +7,17 @@ import {
     type StudentAvailabilityRegistrationDto,
     studentAvailabilityRegistrationSchema,
 } from './availability/dto/student-availability.dto.js';
+import {
+    type StudentSkillCreateDto,
+    studentSkillCreateSchema,
+} from './student-skills/dto/student-skill.dto.js';
 
 @Controller()
 export class StudentController {
     constructor(
         private readonly profileService: StudentProfileService,
         private readonly availabilityService: StudentAvailabilityService,
-        private readonly studenSkillsService: StudentSkillService
+        private readonly studentSkillsService: StudentSkillService,
     ) {}
 
     @Patch('/profile/:id')
@@ -28,5 +32,24 @@ export class StudentController {
         data: StudentAvailabilityRegistrationDto,
     ) {
         return this.availabilityService.updateForStudent(studentId, data);
+    }
+
+    @Post('/students/:studentId/skills')
+    async addStudentSkill(
+        @Param('studentId') studentId: number,
+        @Body({ schema: studentSkillCreateSchema }) data: StudentSkillCreateDto,
+    ) {
+        return this.studentSkillsService.create({
+            studentId,
+            skillId: data.skillId,
+        });
+    }
+
+    @Delete('/students/:studentId/skills/:skillId')
+    async deleteStudentSkill(
+        @Param('studentId') studentId: number,
+        @Param('skillId') skillId: number,
+    ) {
+        return this.studentSkillsService.delete(studentId, skillId);
     }
 }

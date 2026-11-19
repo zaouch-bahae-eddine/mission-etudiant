@@ -1,4 +1,7 @@
-import { studentSkillSchema } from '../dto/student-skill.dto.js';
+import {
+    studentSkillCreateSchema,
+    studentSkillSchema,
+} from '../dto/student-skill.dto.js';
 
 describe('Student skill DTO', () => {
     const data = { studentId: 1, skillId: 2 };
@@ -19,4 +22,19 @@ describe('Student skill DTO', () => {
             studentSkillSchema.safeParse({ ...data, ...overrides }).success,
         ).toBe(false);
     });
+
+    it('accepts a skill ID for student-scoped creation', () => {
+        expect(studentSkillCreateSchema.parse({ skillId: 2 })).toEqual({
+            skillId: 2,
+        });
+    });
+
+    it.each([{ skillId: 0 }, { skillId: 1.5 }, { skillId: 2, studentId: 1 }])(
+        'rejects invalid student-scoped creation data %j',
+        (input) => {
+            expect(studentSkillCreateSchema.safeParse(input).success).toBe(
+                false,
+            );
+        },
+    );
 });
