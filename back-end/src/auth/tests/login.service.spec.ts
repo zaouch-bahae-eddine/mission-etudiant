@@ -31,12 +31,40 @@ describe('LoginService', () => {
         if (user) await usersService.delete(user.id);
     });
 
-    it('signs a token with the user ID and role for valid credentials', async () => {
-        const token = await loginService.login(user.email, password);
-        await expect(jwt.verifyAsync(token)).resolves.toMatchObject({
+    it('signs an access token with the user ID and role for 15 minutes', async () => {
+        const { accessToken } = await loginService.login(user.email, password);
+        const payload = await jwt.verifyAsync(accessToken);
+
+        expect(payload).toMatchObject({
             sub: user.id,
+            type: 'access',
             role: user.role,
         });
+        expect(payload.exp - payload.iat).toBe(15 * 60);
+    });
+
+    it('signs a refresh token with the refresh secret for 7 days', async () => {
+        const { accessToken, refreshToken } = await loginService.login(
+            user.email,
+            password,
+        );
+        const secret = process.env.JWT_REFRESH_SECRET;
+        expect(secret).toBeTruthy();
+        const payload = await jwt.verifyAsync(refreshToken, { secret });
+
+        expect(payload).toEqual({
+            sub: user.id,
+            type: 'refresh',
+            iat: expect.any(Number),
+            exp: expect.any(Number),
+        });
+        expect(payload.exp - payload.iat).toBe(7 * 24 * 60 * 60);
+        await expect(jwt.verifyAsync(refreshToken)).rejects.toThrow(
+            'invalid signature',
+        );
+        await expect(jwt.verifyAsync(accessToken, { secret })).rejects.toThrow(
+            'invalid signature',
+        );
     });
 
     it.each([

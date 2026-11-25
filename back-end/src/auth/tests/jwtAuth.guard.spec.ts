@@ -69,7 +69,7 @@ describe('JwtAuthGuard', () => {
 
     it('rejects invalid and expired tokens', async () => {
         const expired = await jwt.signAsync(
-            { sub: user.id, role: user.role },
+            { sub: user.id, type: 'access', role: user.role },
             { expiresIn: -1 },
         );
 
@@ -83,7 +83,11 @@ describe('JwtAuthGuard', () => {
     });
 
     it('attaches the user to the request for an allowed role', async () => {
-        const token = await jwt.signAsync({ sub: user.id, role: user.role });
+        const token = await jwt.signAsync({
+            sub: user.id,
+            type: 'access',
+            role: user.role,
+        });
         const { context, request } = httpContext(
             getAllMission,
             `Bearer ${token}`,
@@ -98,7 +102,11 @@ describe('JwtAuthGuard', () => {
     });
 
     it('rejects a student who tries to create a mission', async () => {
-        const token = await jwt.signAsync({ sub: user.id, role: user.role });
+        const token = await jwt.signAsync({
+            sub: user.id,
+            type: 'access',
+            role: user.role,
+        });
 
         await expect(
             guard.canActivate(
@@ -114,6 +122,7 @@ describe('JwtAuthGuard', () => {
         expect(admin?.role).toBe(UserRole.ADMIN);
         const token = await jwt.signAsync({
             sub: user.id,
+            type: 'access',
             role: UserRole.ADMIN,
         });
 

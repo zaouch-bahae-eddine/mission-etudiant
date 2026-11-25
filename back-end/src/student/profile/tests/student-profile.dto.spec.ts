@@ -47,7 +47,7 @@ describe('Student profile DTOs', () => {
             bio: null,
         });
     });
-    // il faut modfier le type de  studentProfileUpdateSchema pour qu'il ne permet plus la modification de ces champ
+    // TODO - il faut modfier le type de  studentProfileUpdateSchema pour qu'il ne permet plus la modification de ces champ
     it.each([
         {},
         { bio: undefined },
