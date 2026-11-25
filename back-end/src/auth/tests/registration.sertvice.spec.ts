@@ -1,4 +1,3 @@
-
 import { getTestingModule } from '../../test/setup.js';
 import { RegistrationService } from '../registration.service.js';
 import { RegistrationSpecHelper } from './registration-spec-helper.js';

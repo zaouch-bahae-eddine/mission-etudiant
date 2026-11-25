@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, StandardSchemaValidationPipe } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { AppService } from './app.service.js';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -8,6 +8,9 @@ import { UsersController } from './users/users.controller.js';
 import { UsersModule } from './users/users.module.js';
 import { StudentModule } from './student/student.module.js';
 import { RegistrationModule } from './auth/registration.module.js';
+import { APP_PIPE } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -21,6 +24,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
             appSecret: process.env.OBSERVE_APP_SECRET ?? 'YOUR_APP_SECRET',
             serviceId: 'application',
         }),
+
+        ConfigModule.forRoot(),
 
         //sequelize module for database connection
         SequelizeModule.forRoot({
@@ -39,6 +44,9 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
         StudentModule,
         RegistrationModule,
     ],
-    providers: [AppService],
+    providers: [
+        { provide: APP_PIPE, useClass: StandardSchemaValidationPipe },
+        AppService,
+    ],
 })
 export class AppModule {}

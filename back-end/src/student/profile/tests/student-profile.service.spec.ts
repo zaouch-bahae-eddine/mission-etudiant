@@ -59,13 +59,15 @@ describe.sequential('StudentProfileService', () => {
             userId,
             university: 'Paris',
         });
-        const [affectedRows, profiles] =
-            await profileHelper.updateStudentProfileSpec(profile.userId, {
+        const profiles = await profileHelper.updateStudentProfileSpec(
+            profile.userId,
+            {
+                userId: profile.userId,
                 bio: 'Updated student profile',
                 hasVehicle: true,
-            });
-        expect(affectedRows).toEqual(1);
-        expect(profiles[0].bio).toEqual('Updated student profile');
+            },
+        );
+
         const updatedProfile = await service.findByUserId(profile.userId);
         expect(updatedProfile?.bio).toEqual('Updated student profile');
         expect(updatedProfile?.hasVehicle).toBe(true);
@@ -74,10 +76,11 @@ describe.sequential('StudentProfileService', () => {
 
     it('should return no updated rows when the profile does not exist', async () => {
         expect(
-            await profileHelper.updateStudentProfileSpec(userId, {
+            await profileHelper.updateStudentProfileSpec(-1, {
+                userId: -1,
                 bio: 'Missing',
             }),
-        ).toEqual([0, []]);
+        ).toBe(undefined);
     });
 
     it('should delete a student profile', async () => {

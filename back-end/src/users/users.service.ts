@@ -8,14 +8,19 @@ import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(User) private readonly userModel: typeof User ) {}
+    constructor(@InjectModel(User) private readonly userModel: typeof User) {}
 
     async findAll(paginationfilter: PaginationFilterDto): Promise<User[]> {
         return this.userModel.findAll({
             limit: paginationfilter.limit,
             offset: (paginationfilter.page - 1) * paginationfilter.limit,
             order: paginationfilter.sortBy
-                ? [[paginationfilter.sortBy, paginationfilter.sortOrder || 'ASC']]
+                ? [
+                      [
+                          paginationfilter.sortBy,
+                          paginationfilter.sortOrder || 'ASC',
+                      ],
+                  ]
                 : undefined,
         });
     }
@@ -23,9 +28,17 @@ export class UsersService {
     async findOne(id: number): Promise<User | null> {
         return this.userModel.findByPk(id);
     }
+    async findByEmail(email: string): Promise<User | null> {
+        return this.userModel.findOne({
+            where: { email },
+        });
+    }
 
     async create(user: UserDto, transaction?: Transaction): Promise<User> {
-        return this.userModel.create({...user, passwordHash: await this.hashPassword(user.password)}, { transaction });
+        return this.userModel.create(
+            { ...user, passwordHash: await this.hashPassword(user.password) },
+            { transaction },
+        );
     }
 
     async update(id: number, user: Partial<User>): Promise<User | null> {

@@ -25,5 +25,12 @@ export const UserUpdateSchema = UserSchema.partial()
         message: 'At least one field must be provided for update',
     });
 
+export const userLoginSchema = z.object({
+    email: z.string(),
+    password: z.string()
+}).strict();
+
+
 export type UserDto = z.infer<typeof UserSchema>;
 export type UserUpdateDto = z.infer<typeof UserUpdateSchema>;
+export type UserLoginDto = z.infer<typeof userLoginSchema>;

@@ -42,11 +42,12 @@ describe('Student profile DTOs', () => {
     });
 
     it('allows clearing a field in a partial update', () => {
-        expect(studentProfileUpdateSchema.parse({ bio: null })).toEqual({
+        expect(studentProfileUpdateSchema.parse({ userId: 1, bio: null })).toEqual({
+            userId: 1,
             bio: null,
         });
     });
-
+    // il faut modfier le type de  studentProfileUpdateSchema pour qu'il ne permet plus la modification de ces champ
     it.each([
         {},
         { bio: undefined },
