@@ -22,11 +22,13 @@ export class AuthController {
         return await this.registrationService.registerStudent(data);
     }
 
-    @Post('auth/login')
+    @Post('login')
     async login(@Body({ schema: userLoginSchema }) input: UserLoginDto) {
-        const jwt = await this.loginService.login(input.email, input.password);
-        return {
-            token: `Bearer ${jwt}`,
-        }
+        return await this.loginService.login(input.email, input.password);
+    }
+
+    @Post('refresh')
+    refresh(@Body('refreshToken') refreshToken: string) {
+        return this.loginService.refresh(refreshToken);
     }
 }
