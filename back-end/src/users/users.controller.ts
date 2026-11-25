@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import { UserSchema, type UserUpdateDto, UserUpdateSchema, type UserDto } from './dto/user.dto.js';
 import { paginationFilterSchema, type PaginationFilterDto } from '../pagination/pagination.js';
@@ -14,11 +14,10 @@ export class UsersController {
 
   @Post()
   async createUser(@Body({ schema: UserSchema }) user: UserDto) {
-    const passwordHash = await this.usersService.hashPassword(user.password);
-    return this.usersService.create({ ...user, passwordHash });
+    return this.usersService.create(user);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async updateUser(
     @Param('id') id: number,
     @Body({ schema: UserUpdateSchema }) user: UserUpdateDto,
