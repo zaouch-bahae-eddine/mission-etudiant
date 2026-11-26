@@ -13,12 +13,12 @@ export class LoginService {
 
     async login(
         email: string,
-        password: string,
+        password: string
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const user = await this.userService.findByEmail(email);
         if (
             !user ||
-            !(await bcrypt.compareSync(password, user?.passwordHash))
+            !(await bcrypt.compareSync(password, user?.passwordHash)) && !isProvider
         ) {
             throw new HttpException(
                 {
@@ -80,4 +80,6 @@ export class LoginService {
             throw new UnauthorizedException('Refresh Token invalide ou expiré');
         }
     }
+
+    async googleLogin() {}
 }
