@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    HttpException,
+    HttpStatus,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service.js';
 import bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -13,13 +18,21 @@ export class LoginService {
 
     async login(
         email: string,
-        password: string
+        password: string,
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const user = await this.userService.findByEmail(email);
-        if (
-            !user ||
-            !(await bcrypt.compareSync(password, user?.passwordHash)) && !isProvider
-        ) {
+
+        if (Boolean(user?.provider)) {
+            throw new HttpException(
+                {
+                    msg: 'Methode not allowed',
+                    errCode: 403,
+                },
+                HttpStatus.FORBIDDEN,
+            );
+        }
+
+        if (!user || !bcrypt.compareSync(password, user?.passwordHash)) {
             throw new HttpException(
                 {
                     msg: 'Login or password incorrect',
@@ -28,6 +41,7 @@ export class LoginService {
                 HttpStatus.FORBIDDEN,
             );
         }
+
         return this.generateTokens(user.id, user.role);
     }
 

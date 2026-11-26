@@ -5,6 +5,7 @@ import { PaginationFilterDto } from '../pagination/pagination.js';
 import { type Transaction } from 'sequelize';
 import { type UserDto } from './dto/user.dto.js';
 import bcrypt from 'bcryptjs';
+import { UserRole } from './enums/user-role.enum.js';
 
 @Injectable()
 export class UsersService {
@@ -28,9 +29,16 @@ export class UsersService {
     async findOne(id: number): Promise<User | null> {
         return this.userModel.findByPk(id);
     }
+
     async findByEmail(email: string): Promise<User | null> {
         return this.userModel.findOne({
             where: { email },
+        });
+    }
+
+    async findByUserProviderIdAndRole(userProviderId: string, role: UserRole): Promise<User | null> {
+        return this.userModel.findOne({
+            where: { userProviderId, role },
         });
     }
 

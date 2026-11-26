@@ -16,6 +16,8 @@ export const UserSchema = z
             .optional(),
         city: z.string().min(2, { message: 'City is required' }),
         postalCode: z.string().min(5, { message: 'Postal code is required' }),
+        userProviderId: z.string().optional(),
+        provider: z.string().optional(),
     })
     .strict();
 
@@ -25,12 +27,21 @@ export const UserUpdateSchema = UserSchema.partial()
         message: 'At least one field must be provided for update',
     });
 
-export const userLoginSchema = z.object({
-    email: z.string(),
-    password: z.string()
-}).strict();
+export const userLoginSchema = z
+    .object({
+        email: z.string(),
+        password: z.string(),
+    })
+    .strict();
 
+export const userGoogleLoginSchema = z
+    .object({
+        idToken: z.string(),
+        role: z.enum(UserRole),
+    })
+    .strict();
 
 export type UserDto = z.infer<typeof UserSchema>;
 export type UserUpdateDto = z.infer<typeof UserUpdateSchema>;
 export type UserLoginDto = z.infer<typeof userLoginSchema>;
+export type UserGoogleLoginDto = z.infer<typeof userGoogleLoginSchema>;

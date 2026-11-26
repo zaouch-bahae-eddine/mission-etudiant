@@ -11,6 +11,7 @@ import { GoogleAuthService } from './google-auth.service.js';
 
 @Module({
     imports: [
+        ConfigModule,
         StudentModule,
         UsersModule,
         JwtModule.registerAsync({
