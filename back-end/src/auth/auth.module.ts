@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { RegistrationService } from './registration.service.js';
 import { StudentModule } from '../student/student.module.js';
 import { UsersModule } from '../users/users.module.js';
 import { AuthController } from './auth.controller.js';
@@ -26,18 +25,16 @@ import { GoogleAuthService } from './google-auth.service.js';
         }),
     ],
     exports: [
-        RegistrationService,
         JwtAuthGuard,
         JwtModule,
         LoginService,
         GoogleAuthService,
     ],
     providers: [
-        RegistrationService,
         JwtAuthGuard,
         LoginService,
         GoogleAuthService,
     ],
     controllers: [AuthController],
 })
-export class RegistrationModule {}
+export class AuthModule {}

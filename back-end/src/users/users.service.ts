@@ -36,17 +36,17 @@ export class UsersService {
         });
     }
 
-    async findByUserProviderIdAndRole(userProviderId: string, role: UserRole): Promise<User | null> {
+    async findByUserProviderId(userProviderId: string): Promise<User | null> {
         return this.userModel.findOne({
-            where: { userProviderId, role },
+            where: { userProviderId },
         });
     }
 
-    async create(user: UserDto, transaction?: Transaction): Promise<User> {
-        return this.userModel.create(
-            { ...user, passwordHash: await this.hashPassword(user.password) },
-            { transaction },
-        );
+    async create(user: UserDto): Promise<User> {
+        return this.userModel.create({
+            ...user,
+            passwordHash: await this.hashPassword(user.password),
+        });
     }
 
     async update(id: number, user: Partial<User>): Promise<User | null> {

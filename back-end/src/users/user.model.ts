@@ -44,15 +44,15 @@ export class User extends Model {
     @Column({ type: DataType.TEXT, allowNull: true })
     declare avatarKey: string | null;
 
-    @Column({ type: DataType.STRING(100), allowNull: false })
-    declare city: string;
+    @Column({ type: DataType.STRING(100), allowNull: true })
+    declare city: string | null;
 
-    @Column({ type: DataType.STRING(10), allowNull: false })
-    declare postalCode: string;
+    @Column({ type: DataType.STRING(10), allowNull: true })
+    declare postalCode: string | null;
 
     @Column({ type: DataType.STRING(100), allowNull: true })
-    declare userProviderId: string;
+    declare userProviderId: string | null;
 
     @Column({ type: DataType.STRING(20), allowNull: true })
-    declare provider: string;
+    declare provider: string | null;
 }

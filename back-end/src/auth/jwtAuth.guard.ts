@@ -33,10 +33,8 @@ export class JwtAuthGuard implements CanActivate {
 
         try {
             const payload = await this.jwtService.verifyAsync(token);
-            if (payload.role === 'admin') {
-                return true;
-            }
-            else if (!roles.includes(payload.role)) {
+
+            if (!roles.includes(payload.role)) {
                 throw new UnauthorizedException('Action not allawed');
             }
 

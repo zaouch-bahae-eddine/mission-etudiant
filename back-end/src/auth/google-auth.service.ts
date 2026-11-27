@@ -15,25 +15,21 @@ export class GoogleAuthService {
         private readonly loginService: LoginService,
     ) {}
 
-    async login(idToken: string, role: UserRole) {
-        const { googleId, email, firstName, lastName } =
+    async login(idToken: string) {
+        const { googleId, email, firstName, lastName, avatarKey } =
             await this.verifyToken(idToken);
 
-        let user = await this.userService.findByUserProviderIdAndRole(
-            googleId,
-            role,
-        );
+        let user = await this.userService.findByUserProviderId(googleId);
         if (!user) {
             user = await this.userService.create({
                 firstName,
                 lastName,
                 email,
                 password: '',
-                role,
-                city: 'to define',
-                postalCode: 'to define',
+                role: UserRole.CLIENT, // by default role is client intel the user complete the profile and verify the student account
                 userProviderId: googleId,
                 provider: 'google',
+                avatarKey,
             });
         }
 
@@ -60,7 +56,7 @@ export class GoogleAuthService {
                 emailVerified: payload.email_verified,
                 firstName: payload.name ?? 'first name',
                 lastName: payload.family_name ?? 'last name',
-                picture: payload.picture,
+                avatarKey: payload.picture,
             };
         } catch {
             throw new UnauthorizedException(

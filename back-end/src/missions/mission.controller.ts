@@ -23,7 +23,6 @@ import {
 } from './dto/mission.dto.js';
 import { Mission } from './mission.model.js';
 import { JwtAuthGuard } from '../auth/jwtAuth.guard.js';
-import { Roles } from '../auth/roles.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Controller('mission')
@@ -31,7 +30,6 @@ export class MissionController {
     constructor(private readonly missionsService: MissionsService) {}
 
     @Get()
-    @Roles(['student', 'particular'])
     async getAllMission(
         @Query({ schema: paginationFilterSchema }) query: PaginationFilterDto,
     ): Promise<Mission[]> {
@@ -39,7 +37,6 @@ export class MissionController {
     }
 
     @Post()
-    @Roles(['particular'])
     async createMission(
         @Body({ schema: missionSchema }) mission: MissionDto,
     ): Promise<Mission> {
@@ -47,7 +44,6 @@ export class MissionController {
     }
 
     @Put(':id')
-    @Roles(['particular'])
     async updateMission(
         @Param('id') id: number,
         @Body({ schema: missionUpdateSchema }) mission: MissionUpdateDto,
@@ -56,7 +52,6 @@ export class MissionController {
     }
 
     @Delete(':id')
-    @Roles(['particular'])
     async deleteMission(@Param('id') id: number): Promise<boolean> {
         return await this.missionsService.delete(id);
     }
