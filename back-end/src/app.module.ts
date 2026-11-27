@@ -39,10 +39,10 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
             synchronize: true,
             models: [Mission],
         }),
+        AuthModule,
         MissionsModule,
         UsersModule,
         StudentModule,
-        AuthModule,
     ],
     providers: [
         { provide: APP_PIPE, useClass: StandardSchemaValidationPipe },

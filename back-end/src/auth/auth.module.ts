@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { StudentModule } from '../student/student.module.js';
 import { UsersModule } from '../users/users.module.js';
 import { AuthController } from './auth.controller.js';
@@ -12,7 +12,7 @@ import { GoogleAuthService } from './google-auth.service.js';
     imports: [
         ConfigModule,
         StudentModule,
-        UsersModule,
+        forwardRef(() => UsersModule),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

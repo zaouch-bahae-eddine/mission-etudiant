@@ -49,14 +49,14 @@ export class UsersService {
         });
     }
 
-    async update(id: number, user: Partial<User>): Promise<User | null> {
+    async update(userId: number, user: Partial<User>): Promise<User | null> {
         const [affectedRows] = await this.userModel.update(user, {
-            where: { id },
+            where: { id: userId },
         });
         if (affectedRows === 0) {
             return null;
         }
-        return this.findOne(id);
+        return this.findOne(userId);
     }
 
     async delete(id: number): Promise<boolean> {

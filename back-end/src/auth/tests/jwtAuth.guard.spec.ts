@@ -6,8 +6,8 @@ import { UserRole } from '../../users/enums/user-role.enum.js';
 import { UserSpecHelper } from '../../users/tests/user-spec-helper.js';
 import type { User } from '../../users/user.model.js';
 import { UsersService } from '../../users/users.service.js';
-import { Roles } from '../roles.decorator.js';
 import { JwtAuthGuard } from '../jwtAuth.guard.js';
+import { Roles } from '../decorators/roles.decorator.js';
 
 describe('JwtAuthGuard', () => {
     class TestController {
@@ -31,7 +31,7 @@ describe('JwtAuthGuard', () => {
     ) {
         const request: {
             headers: { authorization?: string };
-            payload?: typeof user;
+            user?: User;
         } = {
             headers: authorization === undefined ? {} : { authorization },
         };
@@ -63,7 +63,7 @@ describe('JwtAuthGuard', () => {
             MissionController.prototype.getAllMission,
         );
         await expect(guard.canActivate(context)).resolves.toBe(true);
-        expect(request.payload).toBeUndefined();
+        expect(request.user).toBeUndefined();
     });
 
     it.each([undefined, '', 'Basic token', 'Bearer'])(
@@ -102,7 +102,7 @@ describe('JwtAuthGuard', () => {
         );
 
         await expect(guard.canActivate(context)).resolves.toBe(true);
-        expect(request.payload).toMatchObject({
+        expect(request.user).toMatchObject({
             id: user.id,
             email: user.email,
             role: user.role,

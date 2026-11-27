@@ -23,8 +23,8 @@ import {
 } from './dto/mission.dto.js';
 import { Mission } from './mission.model.js';
 import { JwtAuthGuard } from '../auth/jwtAuth.guard.js';
-import { Roles } from '../auth/roles.decorator.js';
 import { UserRole } from '../users/enums/user-role.enum.js';
+import { Roles } from '../auth/decorators/roles.decorator.js';
 
 @UseGuards(JwtAuthGuard)
 @Roles([UserRole.CLIENT, UserRole.STUDENT])
