@@ -7,9 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from './jwtAuth.guard.js';
 import { LoginService } from './login.service.js';
+import { GoogleAuthService } from './google-auth.service.js';
 
 @Module({
     imports: [
+        ConfigModule,
         StudentModule,
         UsersModule,
         JwtModule.registerAsync({
@@ -23,8 +25,19 @@ import { LoginService } from './login.service.js';
             }),
         }),
     ],
-    exports: [RegistrationService, JwtAuthGuard, JwtModule, LoginService],
-    providers: [RegistrationService, JwtAuthGuard, LoginService],
+    exports: [
+        RegistrationService,
+        JwtAuthGuard,
+        JwtModule,
+        LoginService,
+        GoogleAuthService,
+    ],
+    providers: [
+        RegistrationService,
+        JwtAuthGuard,
+        LoginService,
+        GoogleAuthService,
+    ],
     controllers: [AuthController],
 })
 export class RegistrationModule {}
