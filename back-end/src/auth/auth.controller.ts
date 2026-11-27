@@ -1,27 +1,30 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { RegistrationService } from './registration.service.js';
 import {
-    studentRegistrationSchemaDto,
-    type StudentRegistrationSchemaDto,
-} from '../student/dto/student-schema.dto.js';
-import { type UserGoogleLoginDto, userGoogleLoginSchema, type UserLoginDto, userLoginSchema } from '../users/dto/user.dto.js';
+    type UserGoogleLoginDto,
+    userGoogleLoginSchema,
+    type UserLoginDto,
+    userLoginSchema,
+    userSchema,
+    type UserDto,
+} from '../users/dto/user.dto.js';
 import { LoginService } from './login.service.js';
 import { GoogleAuthService } from './google-auth.service.js';
+import { UsersService } from '../users/users.service.js';
 
 @Controller('auth')
 export class AuthController {
     constructor(
-        private readonly registrationService: RegistrationService,
+        private readonly userService: UsersService,
         private readonly loginService: LoginService,
-        private readonly googleAuthService: GoogleAuthService
+        private readonly googleAuthService: GoogleAuthService,
     ) {}
 
-    @Post('register/student')
+    @Post('register')
     async registerStudent(
-        @Body({ schema: studentRegistrationSchemaDto })
-        data: StudentRegistrationSchemaDto,
+        @Body({ schema: userSchema })
+        data: UserDto,
     ) {
-        return await this.registrationService.registerStudent(data);
+        return await this.userService.create(data);
     }
 
     @Post('login')
@@ -30,8 +33,10 @@ export class AuthController {
     }
 
     @Post('/google/login')
-    async googleLogin(@Body({ schema: userGoogleLoginSchema }) input: UserGoogleLoginDto) {
-        return await this.googleAuthService.login(input.idToken, input.role);
+    async googleLogin(
+        @Body({ schema: userGoogleLoginSchema }) input: UserGoogleLoginDto,
+    ) {
+        return await this.googleAuthService.login(input.idToken);
     }
 
     @Post('refresh')

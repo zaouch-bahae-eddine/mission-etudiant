@@ -1,8 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { HttpStatus } from '@nestjs/common';
 import { UsersController } from '../users.controller.js';
 import { getTestingModule } from '../../test/setup.js';
 import { UserSpecHelper } from './user-spec-helper.js';
-import { UserRole } from '../enums/user-role.enum.js';
 
 describe('UsersController', () => {
     let controller: UsersController;
@@ -35,13 +34,28 @@ describe('UsersController', () => {
 
     it.concurrent('should update an existing user', async () => {
         const user = await userHelper.createUserSpec({
-            firstName: 'updateduser',
+            firstName: 'originaluser',
         });
-        const updatedUser = await controller.updateUser(user.id, {
-            firstName: 'updateduser',
-        });
+        const updatedUser = await controller.updateUser(
+            user.id,
+            { firstName: 'updateduser' },
+            user,
+        );
         expect(updatedUser).toBeDefined();
         expect(updatedUser?.firstName).toEqual('updateduser');
+    });
+
+    it.concurrent('should forbid updating another user', async () => {
+        const currentUser = await userHelper.createUserSpec();
+        const otherUser = await userHelper.createUserSpec();
+
+        await expect(
+            controller.updateUser(
+                otherUser.id,
+                { firstName: 'updateduser' },
+                currentUser,
+            ),
+        ).rejects.toMatchObject({ status: HttpStatus.FORBIDDEN });
     });
 
     it.concurrent('should delete a user', async () => {

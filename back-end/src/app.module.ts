@@ -7,7 +7,7 @@ import { Mission } from './missions/mission.model.js';
 import { UsersController } from './users/users.controller.js';
 import { UsersModule } from './users/users.module.js';
 import { StudentModule } from './student/student.module.js';
-import { RegistrationModule } from './auth/registration.module.js';
+import { AuthModule } from './auth/auth.module.js';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -39,10 +39,10 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
             synchronize: true,
             models: [Mission],
         }),
+        AuthModule,
         MissionsModule,
         UsersModule,
         StudentModule,
-        RegistrationModule,
     ],
     providers: [
         { provide: APP_PIPE, useClass: StandardSchemaValidationPipe },

@@ -13,7 +13,7 @@ import { GoogleAuthService } from '../google-auth.service.js';
 
 describe('Google login (HTTP)', () => {
     const path = '/auth/google/login';
-    const role = UserRole.STUDENT;
+    const avatarKey = 'https://example.com/avatar.png';
     const idToken = 'google-id-token';
     const firstName = 'Camille';
     const lastName = 'Martin';
@@ -64,6 +64,7 @@ describe('Google login (HTTP)', () => {
             email_verified: true,
             name: firstName,
             family_name: lastName,
+            picture: avatarKey,
             iat: issuedAt,
             exp: issuedAt + 3600,
         });
@@ -76,7 +77,7 @@ describe('Google login (HTTP)', () => {
 
         const { body } = await request(app.getHttpServer())
             .post(path)
-            .send({ idToken, role })
+            .send({ idToken })
             .expect(HttpStatus.CREATED);
 
         expect(verifyIdToken).toHaveBeenCalledExactlyOnceWith({
@@ -88,14 +89,17 @@ describe('Google login (HTTP)', () => {
             firstName,
             lastName,
             email,
-            role,
+            role: UserRole.CLIENT,
             userProviderId: googleId,
             provider: 'google',
+            avatarKey,
+            city: null,
+            postalCode: null,
         });
         await expect(jwt.verifyAsync(body.accessToken)).resolves.toMatchObject({
             sub: user!.id,
             type: 'access',
-            role,
+            role: UserRole.CLIENT,
         });
         await expect(
             jwt.verifyAsync(body.refreshToken, {
@@ -107,7 +111,7 @@ describe('Google login (HTTP)', () => {
     it('logs in an existing user by Google subject even when the ID token changes', async () => {
         const user = await userHelper.createUserSpec({
             email,
-            role,
+            role: UserRole.STUDENT,
             provider: 'google',
             userProviderId: googleId,
         });
@@ -116,7 +120,7 @@ describe('Google login (HTTP)', () => {
         for (const token of [idToken, 'renewed-google-id-token']) {
             const { body } = await request(app.getHttpServer())
                 .post(path)
-                .send({ idToken: token, role })
+                .send({ idToken: token })
                 .expect(HttpStatus.CREATED);
 
             await expect(
@@ -124,7 +128,7 @@ describe('Google login (HTTP)', () => {
             ).resolves.toMatchObject({
                 sub: user.id,
                 type: 'access',
-                role,
+                role: UserRole.STUDENT,
             });
         }
     });
@@ -136,7 +140,7 @@ describe('Google login (HTTP)', () => {
 
         await request(app.getHttpServer())
             .post(path)
-            .send({ idToken, role })
+            .send({ idToken })
             .expect(HttpStatus.UNAUTHORIZED);
     });
 
@@ -145,11 +149,11 @@ describe('Google login (HTTP)', () => {
 
         await request(app.getHttpServer())
             .post(path)
-            .send({ idToken, role })
+            .send({ idToken })
             .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it.each([{ role }, { idToken, role: 'invalid-role' }])(
+    it.each([{}, { idToken, role: UserRole.STUDENT }])(
         'returns 400 for invalid input %j before calling Google',
         async (input) => {
             const verifyIdToken = vi

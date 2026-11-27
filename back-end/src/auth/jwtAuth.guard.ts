@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service.js';
 import { Reflector } from '@nestjs/core';
-import { Roles } from './roles.decorator.js';
+import { Roles } from './decorators/roles.decorator.js';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -33,14 +33,12 @@ export class JwtAuthGuard implements CanActivate {
 
         try {
             const payload = await this.jwtService.verifyAsync(token);
-            if (payload.role === 'admin') {
-                return true;
-            }
-            else if (!roles.includes(payload.role)) {
+
+            if (!roles.includes(payload.role)) {
                 throw new UnauthorizedException('Action not allawed');
             }
 
-            request['payload'] = await this.userService.findOne(payload.sub);
+            request['user'] = await this.userService.findOne(payload.sub);
         } catch (err) {
             throw new UnauthorizedException('Token invalide ou expiré');
         }

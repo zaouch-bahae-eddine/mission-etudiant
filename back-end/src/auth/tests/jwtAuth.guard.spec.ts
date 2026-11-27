@@ -6,11 +6,19 @@ import { UserRole } from '../../users/enums/user-role.enum.js';
 import { UserSpecHelper } from '../../users/tests/user-spec-helper.js';
 import type { User } from '../../users/user.model.js';
 import { UsersService } from '../../users/users.service.js';
-import { AuthController } from '../auth.controller.js';
 import { JwtAuthGuard } from '../jwtAuth.guard.js';
+import { Roles } from '../decorators/roles.decorator.js';
 
 describe('JwtAuthGuard', () => {
-    const { getAllMission, createMission } = MissionController.prototype;
+    class TestController {
+        @Roles([UserRole.STUDENT])
+        studentRoute() {}
+
+        @Roles([UserRole.CLIENT])
+        clientRoute() {}
+    }
+
+    const { studentRoute, clientRoute } = TestController.prototype;
     let jwt: JwtService;
     let guard: JwtAuthGuard;
     let user: User;
@@ -23,7 +31,7 @@ describe('JwtAuthGuard', () => {
     ) {
         const request: {
             headers: { authorization?: string };
-            payload?: typeof user;
+            user?: User;
         } = {
             headers: authorization === undefined ? {} : { authorization },
         };
@@ -52,17 +60,17 @@ describe('JwtAuthGuard', () => {
 
     it('allows a handler without role metadata', async () => {
         const { context, request } = httpContext(
-            AuthController.prototype.login,
+            MissionController.prototype.getAllMission,
         );
         await expect(guard.canActivate(context)).resolves.toBe(true);
-        expect(request.payload).toBeUndefined();
+        expect(request.user).toBeUndefined();
     });
 
     it.each([undefined, '', 'Basic token', 'Bearer'])(
         'rejects a missing or malformed authorization header (%s)',
         async (header) => {
             await expect(
-                guard.canActivate(httpContext(getAllMission, header).context),
+                guard.canActivate(httpContext(studentRoute, header).context),
             ).rejects.toBeInstanceOf(UnauthorizedException);
         },
     );
@@ -76,7 +84,7 @@ describe('JwtAuthGuard', () => {
         for (const token of ['invalid-token', expired]) {
             await expect(
                 guard.canActivate(
-                    httpContext(getAllMission, `Bearer ${token}`).context,
+                    httpContext(studentRoute, `Bearer ${token}`).context,
                 ),
             ).rejects.toBeInstanceOf(UnauthorizedException);
         }
@@ -89,47 +97,32 @@ describe('JwtAuthGuard', () => {
             role: user.role,
         });
         const { context, request } = httpContext(
-            getAllMission,
+            studentRoute,
             `Bearer ${token}`,
         );
 
         await expect(guard.canActivate(context)).resolves.toBe(true);
-        expect(request.payload).toMatchObject({
+        expect(request.user).toMatchObject({
             id: user.id,
             email: user.email,
             role: user.role,
         });
     });
 
-    it('rejects a student who tries to create a mission', async () => {
-        const token = await jwt.signAsync({
-            sub: user.id,
-            type: 'access',
-            role: user.role,
-        });
+    it.each([UserRole.STUDENT, 'admin'])(
+        'rejects a token with role %s on a client-only handler',
+        async (role) => {
+            const token = await jwt.signAsync({
+                sub: user.id,
+                type: 'access',
+                role,
+            });
 
-        await expect(
-            guard.canActivate(
-                httpContext(createMission, `Bearer ${token}`).context,
-            ),
-        ).rejects.toBeInstanceOf(UnauthorizedException);
-    });
-
-    it('allows an administrator to access a route reserved for particuliers', async () => {
-        const admin = await usersService.update(user.id, {
-            role: UserRole.ADMIN,
-        });
-        expect(admin?.role).toBe(UserRole.ADMIN);
-        const token = await jwt.signAsync({
-            sub: user.id,
-            type: 'access',
-            role: UserRole.ADMIN,
-        });
-
-        await expect(
-            guard.canActivate(
-                httpContext(createMission, `Bearer ${token}`).context,
-            ),
-        ).resolves.toBe(true);
-    });
+            await expect(
+                guard.canActivate(
+                    httpContext(clientRoute, 'Bearer ' + token).context,
+                ),
+            ).rejects.toBeInstanceOf(UnauthorizedException);
+        },
+    );
 });

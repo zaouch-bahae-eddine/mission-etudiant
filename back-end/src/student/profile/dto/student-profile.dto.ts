@@ -32,9 +32,8 @@ export const studentProfileRegistrationSchema = studentProfileSchema.omit({
     userId: true,
 });
 
-export const studentProfileUpdateSchema = studentProfileSchema
+export const studentProfileUpdateSchema = studentProfileRegistrationSchema
     .partial()
-    .required({ userId: true })
     .refine(
         (data) => Object.values(data).some((value) => value !== undefined),
         {

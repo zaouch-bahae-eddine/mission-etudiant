@@ -62,7 +62,6 @@ describe.sequential('StudentProfileService', () => {
         const profiles = await profileHelper.updateStudentProfileSpec(
             profile.userId,
             {
-                userId: profile.userId,
                 bio: 'Updated student profile',
                 hasVehicle: true,
             },
@@ -77,7 +76,6 @@ describe.sequential('StudentProfileService', () => {
     it('should return no updated rows when the profile does not exist', async () => {
         expect(
             await profileHelper.updateStudentProfileSpec(-1, {
-                userId: -1,
                 bio: 'Missing',
             }),
         ).toBe(undefined);

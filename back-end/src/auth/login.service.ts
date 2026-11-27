@@ -45,29 +45,6 @@ export class LoginService {
         return this.generateTokens(user.id, user.role);
     }
 
-    async generateTokens(userId: number, userRole: UserRole) {
-        const accessToken = await this.jwtService.signAsync(
-            { sub: userId, type: 'access', role: userRole },
-            {
-                secret: process.env.JWT_ACCESS_SECRET,
-                expiresIn: '15m',
-            },
-        );
-
-        const refreshToken = await this.jwtService.signAsync(
-            { sub: userId, type: 'refresh' },
-            {
-                secret: process.env.JWT_REFRESH_SECRET,
-                expiresIn: '7d',
-            },
-        );
-
-        return {
-            accessToken,
-            refreshToken,
-        };
-    }
-
     async refresh(refreshToken: string) {
         try {
             const payload = await this.jwtService.verifyAsync(refreshToken, {
@@ -93,6 +70,29 @@ export class LoginService {
         } catch {
             throw new UnauthorizedException('Refresh Token invalide ou expiré');
         }
+    }
+
+    async generateTokens(userId: number, userRole: UserRole) {
+        const accessToken = await this.jwtService.signAsync(
+            { sub: userId, type: 'access', role: userRole },
+            {
+                secret: process.env.JWT_ACCESS_SECRET,
+                expiresIn: '15m',
+            },
+        );
+
+        const refreshToken = await this.jwtService.signAsync(
+            { sub: userId, type: 'refresh' },
+            {
+                secret: process.env.JWT_REFRESH_SECRET,
+                expiresIn: '7d',
+            },
+        );
+
+        return {
+            accessToken,
+            refreshToken,
+        };
     }
 
     async googleLogin() {}
