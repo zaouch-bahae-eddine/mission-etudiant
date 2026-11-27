@@ -50,7 +50,7 @@ export class User extends Model {
     @Column({ type: DataType.STRING(10), allowNull: false })
     declare postalCode: string;
 
-    @Column({ type: DataType.STRING(20), allowNull: true })
+    @Column({ type: DataType.STRING(100), allowNull: true })
     declare userProviderId: string;
 
     @Column({ type: DataType.STRING(20), allowNull: true })
